@@ -11,10 +11,14 @@ def ingresar_calificaciones():
     """
     Permite al usuario introducir nombres de materias y calificaciones.
     Valida que las calificaciones estén entre 0 y 10.
-    Retorna dos listas: una de nombres y otra de calificaciones.
+
+    Internamente almacena cada par (materia, calificación) en una lista de
+    tuplas para mantener los datos acoplados. En la interfaz retorna dos
+    listas separadas (nombres y calificaciones) para compatibilidad con
+    el resto del programa.
     """
-    materias = []
-    calificaciones = []
+    # Estructura interna: lista de tuplas (materia, calificación)
+    datos = []
 
     while True:
         # Solicitar nombre de la materia
@@ -34,8 +38,7 @@ def ingresar_calificaciones():
             except ValueError:
                 print("Debe ingresar un número válido. Intente de nuevo.")
 
-        materias.append(nombre_materia)
-        calificaciones.append(nota)
+        datos.append((nombre_materia, nota))
 
         # Preguntar si desea continuar
         while True:
@@ -47,6 +50,9 @@ def ingresar_calificaciones():
         if continuar in ("n", "no"):
             break
 
+    # Interfaz: retornar dos listas separadas
+    materias = [par[0] for par in datos]
+    calificaciones = [par[1] for par in datos]
     return materias, calificaciones
 
 
@@ -124,11 +130,26 @@ def mostrar_resumen(materias, calificaciones, promedio, aprobados, reprobados,
     print("=" * 60)
 
 
-def main():
-    """Función principal que orquesta el flujo del programa."""
+def mostrar_bienvenida():
+    """
+    Muestra el mensaje de encabezado con las instrucciones iniciales
+    para el usuario.
+    """
     print("\n=== CALCULADORA DE PROMEDIOS ESCOLARES ===")
     print("Ingrese materias y sus calificaciones (0-10).")
     print("Escriba 'n' cuando desee terminar de cargar datos.\n")
+
+
+def main():
+    """
+    Función principal que orquesta el flujo del programa.
+
+    Llama a ingresar_calificaciones(), luego calcula promedio, aprobados/reprobados
+    y extremos, y muestra el resumen. Maneja explícitamente el caso de lista vacía:
+    si el usuario no ingresa ninguna materia, se informa y se sale sin procesar
+    ni calcular, evitando errores y dejando claro el flujo de control.
+    """
+    mostrar_bienvenida()
 
     materias, calificaciones = ingresar_calificaciones()
 
